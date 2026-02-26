@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event.name }} | EventTracker</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(15, 23, 42, 0.3);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.1);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #f1f5f9;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            background: none;
+            border: 1px solid rgba(226, 232, 240, 0.2);
+            color: #cbd5e1;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(226, 232, 240, 0.05);
+            border-color: rgba(226, 232, 240, 0.3);
+            color: #f1f5f9;
+        }
+
+        .main-content {
+            padding: 60px 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .event-header {
+            margin-bottom: 48px;
+        }
+
+        .event-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: #f1f5f9;
+            margin-bottom: 16px;
+        }
+
+        .event-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .info-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(226, 232, 240, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #f1f5f9;
+            font-weight: 500;
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(226, 232, 240, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
+        }
+
+        .add-btn:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-2px);
+        }
+
+        .task-item, .attendee-item {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(226, 232, 240, 0.15);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+
+        .task-meta {
+            font-size: 11px;
+            color: #cbd5e1;
+        }
+
+        .task-status {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+        }
+
+        .task-status.todo {
+            background: rgba(241, 65, 108, 0.2);
+            color: #f87171;
+        }
+
+        .task-status.in-progress {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fdba74;
+        }
+
+        .task-status.completed {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+        }
+
+        .attendee-info {
+            flex: 1;
+        }
+
+        .attendee-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+
+        .attendee-email {
+            font-size: 11px;
+            color: #cbd5e1;
+        }
+
+        .rsvp-status {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+        }
+
+        .rsvp-status.confirmed {
+            background: rgba(34, 197, 94, 0.2);
+            color: #86efac;
+        }
+
+        .rsvp-status.declined {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            padding: 32px 16px;
+        }
+
+        .description {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(226, 232, 240, 0.15);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+
+        .description-label {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .sections-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .event-title {
+                font-size: 24px;
+            }
+
+            .main-content {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="logo-icon">📅</div>
+            <div class="logo">EventTracker</div>
+        </div>
+        <div class="header-right">
+            <a href="{% url 'dashboard' %}" class="back-btn">← Back to Dashboard</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="event-header">
+            <h1 class="event-title">{{ event.name }}</h1>
+            
+            <div class="event-info">
+                <div class="info-card">
+                    <div class="info-label">Date</div>
+                    <div class="info-value">📅 {{ event.date|date:"M d, Y" }}</div>
+                </div>
+                {% if event.time %}
+                <div class="info-card">
+                    <div class="info-label">Time</div>
+                    <div class="info-value">🕐 {{ event.time|date:"h:i A" }}</div>
+                </div>
+                {% endif %}
+                {% if event.location %}
+                <div class="info-card">
+                    <div class="info-label">Location</div>
+                    <div class="info-value">📍 {{ event.location }}</div>
+                </div>
+                {% endif %}
+                <div class="info-card">
+                    <div class="info-label">Status</div>
+                    <div class="info-value">{{ event.status }}</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Priority</div>
+                    <div class="info-value">{{ event.priority }}</div>
+                </div>
+                {% if event.budget %}
+                <div class="info-card">
+                    <div class="info-label">Budget</div>
+                    <div class="info-value">${{ event.budget }}</div>
+                </div>
+                {% endif %}
+                {% if event.expected_attendees %}
+                <div class="info-card">
+                    <div class="info-label">Expected Attendees</div>
+                    <div class="info-value">{{ event.expected_attendees }}</div>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if event.description %}
+            <div class="description">
+                <div class="description-label">Description</div>
+                {{ event.description }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="sections-grid">
+            <div class="section">
+                <div class="section-title">
+                    <span>📋 Tasks</span>
+                    <a href="{% url 'add_task' event.id %}" class="add-btn">+ Add Task</a>
+                </div>
+
+                {% if tasks %}
+                    {% for task in tasks %}
+                    <div class="task-item">
+                        <div class="task-content">
+                            <div class="task-title">{{ task.title }}</div>
+                            {% if task.assigned_to %}
+                            <div class="task-meta">👤 {{ task.assigned_to }}</div>
+                            {% endif %}
+                            {% if task.due_date %}
+                            <div class="task-meta">📅 Due: {{ task.due_date|date:"M d, Y" }}</div>
+                            {% endif %}
+                        </div>
+                        <span class="task-status {{ task.status|lower|cut:' ' }}">{{ task.status }}</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="empty-message">No tasks yet. Create your first task!</div>
+                {% endif %}
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <span>👥 Attendees</span>
+                    <a href="{% url 'add_attendee' event.id %}" class="add-btn">+ Add</a>
+                </div>
+
+                {% if attendees %}
+                    {% for attendee in attendees %}
+                    <div class="attendee-item">
+                        <div class="attendee-info">
+                            <div class="attendee-name">{{ attendee.name }}</div>
+                            <div class="attendee-email">{{ attendee.email }}</div>
+                            {% if attendee.phone %}
+                            <div class="attendee-email">📱 {{ attendee.phone }}</div>
+                            {% endif %}
+                        </div>
+                        <span class="rsvp-status {{ attendee.rsvp_status|lower }}">{{ attendee.rsvp_status }}</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="empty-message">No attendees yet. Invite people!</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if notes %}
+        <div class="section">
+            <div class="section-title">📝 Notes</div>
+            {% for note in notes %}
+            <div class="task-item">
+                <div class="task-content">
+                    <div class="task-title">{{ note.note }}</div>
+                    <div class="task-meta">{{ note.created_at|date:"M d, Y h:i A" }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
